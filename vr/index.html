@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Hello, WebVR! - A-Frame</title>
+  <meta name="description" content="Hello, WebVR! - A-Frame">
+  <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+</head>
+
+<body>
+  <a-scene light="defaultLightsEnabled: false">
+    <a-entity light="type: ambient; color: #eee"></a-entity>
+    <!-- <a-sphere position="0 0 0" radius="500" segmentsWidth="64" segmentsHeight="32" side="back" src="work.jpg"></a-sphere> -->
+    <a-sky src="work.jpg?a=0.14554932" material="" geometry=""></a-sky>
+    <a-box position="3.916 -1.552 -1.571" rotation="0 45 0" color="#4CC3D9" shadow="" material="" geometry=""></a-box>
+    <a-plane position="3.743 -1.993 -0.748" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow="" material="" geometry=""></a-plane>
+
+<a-entity light="intensity:0.8;castShadow:true" position="10.203 1 4.984"></a-entity>
+  </a-scene>
+  <script>
+  var sky = document.querySelector('a-sky');
+  var filename = sky.getAttribute('src')
+  var previousBuffer = {}
+  var replace = debounce(() => {
+    THREE.Cache.files={}
+    sky.setAttribute('src', filename+'?a='+Math.random().toFixed(8))
+  }, 1000)
+  setInterval(function() {
+    fetch(filename+'?a='+Math.random().toFixed(8))
+      .then(response => response.blob())
+      .then(buffer => {
+        if (buffer.size > 1000 && (buffer.size !== previousBuffer.size) ) {
+          console.log('different', buffer.size)
+          replace()
+        }
+        previousBuffer = buffer
+      })
+      .catch(console.warn)
+  }, 500)
+  function debounce(func, time) {
+    var pointer;
+    return () => {
+      clearTimeout(pointer)
+      pointer = setTimeout(func, time)
+    }
+  }
+
+  </script>
+</body>
+
+</html>
